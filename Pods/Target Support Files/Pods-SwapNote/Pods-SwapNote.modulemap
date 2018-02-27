@@ -1,0 +1,6 @@
+framework module Pods_SwapNote {
+  umbrella header "Pods-SwapNote-umbrella.h"
+
+  export *
+  module * { export * }
+}
