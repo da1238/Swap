@@ -32,11 +32,11 @@ class ProgramsTableViewController: UITableViewController {
     
     private func loadSamplePrograms(){
   
-        guard let program1 = Program(title: "Computer Information Science", code: "CIS", banner: #imageLiteral(resourceName: "CISBanner")) else {
+        guard let CIS = Program(title: "Computer Information Science", code: "CIS", banner: #imageLiteral(resourceName: "CIS")) else {
             fatalError("Unable to instantiate")
         }
         
-        programs += [program1]
+        programs += [CIS]
     }
     
     override func didReceiveMemoryWarning() {

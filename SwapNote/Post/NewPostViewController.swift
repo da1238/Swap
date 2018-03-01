@@ -11,10 +11,18 @@ import FirebaseAuth
 import Firebase
 import FirebaseDatabase
 import FirebaseFirestore
+import FirebaseStorage
 
 class NewPostViewController: UIViewController, UITextViewDelegate, UITextFieldDelegate {
     
-    @IBOutlet weak var navBar: UINavigationBar!
+    //MARK: Properties
+    
+    @IBOutlet weak var userProfilePic: UIImageView!
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblUsername: UILabel!
+    @IBOutlet weak var photoActivityIndicator: UIActivityIndicatorView!
+    
+    //MARK: Variables
     var pic: UIImage?
     var photoData: Data!
     
@@ -27,14 +35,20 @@ class NewPostViewController: UIViewController, UITextViewDelegate, UITextFieldDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        newPost.becomeFirstResponder()
         newPost.textContainerInset = UIEdgeInsetsMake(30, 20, 20, 20)
         if(newPost.text.count == 0) {
         newPost.text = "What's Up?"
         newPost.textColor = UIColor.lightGray
         }
         
-        navBar.prefersLargeTitles = true
+        photoActivityIndicator.startAnimating()
         
+        userProfilePic.contentMode = UIViewContentMode.scaleAspectFit
+        userProfilePic.layer.cornerRadius = 25
+        userProfilePic.layer.masksToBounds = true
+        
+         setupProfile()
     }
 
     override func didReceiveMemoryWarning() {
@@ -120,6 +134,30 @@ class NewPostViewController: UIViewController, UITextViewDelegate, UITextFieldDe
     }
     }
     
+    // MARK: Functions
+    func setupProfile(){
+
+        if let uid = Auth.auth().currentUser?.uid{
+
+            let storageRef = Storage.storage().reference().child("profile_picture").child(uid)
+            storageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                let pic = UIImage(data: data!)
+                self.userProfilePic.image = pic
+                self.photoActivityIndicator.stopAnimating()
+            }
+
+            databaseRef.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let dict = snapshot.value as? [String: AnyObject]
+                {
+                    let firstName = dict["first_name"] as? String
+                    let lastName = dict["last_name"] as? String
+                    self.lblName.text = firstName! + " " + lastName!
+                    self.lblUsername.text = dict["username"] as? String
+                }
+            })
+        }
+    }
+
     @IBAction func btnCancel(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }

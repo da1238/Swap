@@ -41,8 +41,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
  
     }
     
-        //Any changes
-    
     
     // Customize text fields
     override func viewDidLayoutSubviews() {

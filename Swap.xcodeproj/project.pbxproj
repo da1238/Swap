@@ -155,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				63665E8B1FDF837F00296A58 /* HomePageViewController.swift */,
+				632F254D202FACD5005DD8FA /* Chat.swift */,
 				632F2547202F7BE0005DD8FA /* ChatViewController.swift */,
 				632F2549202FA8B2005DD8FA /* InboxTableViewController.swift */,
 				632F254B202FAC01005DD8FA /* InboxTableViewCell.swift */,
@@ -266,7 +267,6 @@
 				63982EA71FED7E0C00A012D4 /* CourseTableViewCell.swift */,
 				63C1B9EC1FEC5A88001401A8 /* AllCoursesTableViewController.xib */,
 				63982EA51FED793A00A012D4 /* Course.swift */,
-				632F254D202FACD5005DD8FA /* Chat.swift */,
 			);
 			path = Courses;
 			sourceTree = "<group>";

@@ -64,7 +64,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     
     //MARK: Actions
 
-  
     @IBAction func uploadPicture(_ sender: UITapGestureRecognizer) {
         
         //Create action sheet
@@ -176,14 +175,13 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                         }
                         let profileImageUrl = metadata?.downloadURL()?.absoluteString
                         let userReference = self.databaseRef.child("users").child(uid!)
-                        let values = ["first_name": "", "last_name": "", "email": email, "username": username, "bio": "", "user_photo": profileImageUrl, "user_rating": ""]
+                        let values = ["first_name": "N/A", "last_name": "N/A", "email": email, "username": username, "bio": "N/A", "user_photo": profileImageUrl, "user_rating": "0.0"]
                         
                         userReference.updateChildValues(values, withCompletionBlock: {(error, ref) in
                             if error != nil {
                                 print(error!)
                                 return
                             }
-//                            self.dismiss(animated: true, completion: nil)
                         })
                     })
                 } else {
@@ -197,7 +195,9 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                     })
                 }
         let emailSentAlert = UIAlertController(title: "Email Verification", message: "A verification email has been sent to your inbox.", preferredStyle: .alert)
-        emailSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        emailSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler:{(action) in
+            self.dismiss(animated: true, completion: nil)
+        }))
         self.present(emailSentAlert, animated: true, completion: nil)
 
     }

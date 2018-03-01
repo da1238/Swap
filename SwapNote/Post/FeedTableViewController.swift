@@ -123,6 +123,7 @@ class FeedTableViewController: UITableViewController {
         let cell: FeedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! FeedTableViewCell
         let post = postArray[indexPath.row]
         
+        cell.activityIndicator.startAnimating()
         cell.lblPost.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0)
         cell.lblPost?.text = post.content
         cell.lblUserName?.text = post.userName
@@ -136,8 +137,10 @@ class FeedTableViewController: UITableViewController {
             storageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 let pic = UIImage(data: post.photo)
                 cell.profilePicture.image = pic
+                cell.activityIndicator.stopAnimating()
             }
         }
+        
         return cell
     }
     

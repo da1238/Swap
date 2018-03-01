@@ -10,12 +10,9 @@ import UIKit
 
 class NewNoteViewController: UIViewController {
     
-    @IBOutlet weak var navBar: UINavigationBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navBar.prefersLargeTitles = true
         
         // Do any additional setup after loading the view.
        

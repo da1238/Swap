@@ -19,6 +19,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet weak var lblFirstName: UILabel!
     @IBOutlet weak var profilePicture: UIImageView!
     @IBOutlet weak var lblTimeStamp: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

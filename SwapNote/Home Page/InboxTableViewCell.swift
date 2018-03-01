@@ -10,16 +10,13 @@ import UIKit
 
 class InboxTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var userName: UILabel!
-    @IBOutlet weak var lastText: UILabel!
-    @IBOutlet weak var profilePicture: UIImageView!
-    
+    //MARK: Properites
+    @IBOutlet weak var chatName: UILabel!
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        profilePicture.contentMode = UIViewContentMode.scaleAspectFit
-        profilePicture.layer.cornerRadius = 25
-        profilePicture.layer.masksToBounds = true
+        
         
     }
    

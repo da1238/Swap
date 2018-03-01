@@ -16,7 +16,7 @@ class InboxTableViewController: UITableViewController {
     
     private func loadSampleChat(){
         
-        guard let chat1 = Chat(userName: "David", lastText: "What's up?") else {
+        guard let chat1 = Chat(chatName: "David") else {
             fatalError("Error")
         }
         
@@ -68,9 +68,8 @@ class InboxTableViewController: UITableViewController {
         
         let chat = chats[indexPath.row]
         
-
-        cell.userName.text = chat.userName
-        cell.lastText.text = chat.lastText
+        cell.chatName.text = "CIS Group Chat"
+        
 
         return cell
     }

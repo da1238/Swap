@@ -14,20 +14,22 @@ class AllProgramsTableViewController: UITableViewController {
     
     var programs = [Program]()
     
-    private func loadSamplePrograms(){
+    private func loadPrograms(){
 
-        guard let program1 = Program(title: "Computer Information Science", code: "CIS", banner: #imageLiteral(resourceName: "CISBanner")) else {
+        guard let ACCT = Program(title: "Accounting", code: "ACCT", banner: #imageLiteral(resourceName: "ACCT") )else {
             fatalError("Unable to instantiate")
         }
-        
-        guard let program2 = Program(title: "Accounting", code: "ACCT", banner: #imageLiteral(resourceName: "ACCTBanner") )else {
+        guard let EDUC = Program(title: "Education", code: "EDUC", banner: #imageLiteral(resourceName: "EDUC"))else {
             fatalError("Unable to instantiate")
         }
-        guard let program3 = Program(title: "Education", code: "EDUC", banner: #imageLiteral(resourceName: "EDUCBanner"))else {
+        guard let ART = Program(title: "Art (Business)", code: "ART", banner: #imageLiteral(resourceName: "ART"))else {
+            fatalError("Unable to instantiate")
+        }
+        guard let APHS = Program(title: "Applied Health Sciences", code: "APHS", banner: #imageLiteral(resourceName: "APHS"))else {
             fatalError("Unable to instantiate")
         }
 
-        programs += [program1, program2, program3]
+        programs += [ACCT, APHS, ART, EDUC]
     }
     
     override func viewDidLoad() {
@@ -44,7 +46,7 @@ class AllProgramsTableViewController: UITableViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
         
-        loadSamplePrograms()
+        loadPrograms()
 
     }
     

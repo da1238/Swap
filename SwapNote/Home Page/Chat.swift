@@ -11,20 +11,18 @@ import Foundation
 class Chat {
     
     //MARK: Properties
-    
-    var userName: String
-    var lastText: String
+    var chatName: String
     
     //MARK: Initialization
-    init?(userName: String, lastText: String) {
+    init?(chatName: String) {
         
-        if userName.isEmpty || lastText.isEmpty{
+        if chatName.isEmpty {
             return nil
         }
         
         //Initialize stored properties
-        self.userName = userName
-        self.lastText = lastText
+        self.chatName = chatName
+
         
     }
     
