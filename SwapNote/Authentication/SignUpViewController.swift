@@ -153,8 +153,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                     self.present(signuperrorAlert, animated: true, completion: nil)
                     return
                 }
-                self.sendEmail()
-//                self.dismiss(animated: true, completion: nil)
                 
                 guard let email = self.email.text else{
                     print("email error")
@@ -194,11 +192,9 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                 }
                     })
                 }
-        let emailSentAlert = UIAlertController(title: "Email Verification", message: "A verification email has been sent to your inbox.", preferredStyle: .alert)
-        emailSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler:{(action) in
-            self.dismiss(animated: true, completion: nil)
-        }))
-        self.present(emailSentAlert, animated: true, completion: nil)
+
+        self.sendEmail()
+        
 
     }
     
@@ -218,7 +214,12 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                     
                 } else {
     
+                    let emailSentAlert = UIAlertController(title: "Email Verification", message: "A verification email has been sent to your inbox.", preferredStyle: .alert)
+                    emailSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler:{(action) in
+                        self.dismiss(animated: true, completion: nil)
+                    }))
 
+                    self.present(emailSentAlert, animated: true, completion: nil)
                 }
                 do {
                     try Auth.auth().signOut()

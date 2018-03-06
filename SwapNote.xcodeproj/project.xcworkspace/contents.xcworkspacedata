@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:SwapNote.xcodeproj">
+      location = "self:/Users/davidabraham/Documents/Xcode/SwapNote/SwapNote.xcodeproj">
    </FileRef>
 </Workspace>
