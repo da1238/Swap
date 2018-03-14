@@ -15,21 +15,54 @@ class AllProgramsTableViewController: UITableViewController {
     var programs = [Program]()
     
     private func loadPrograms(){
+        
+        guard let Art = Program(title: "Art & Performing Arts", banner: #imageLiteral(resourceName: "Art")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Business = Program(title: "Business & Leadership", banner: #imageLiteral(resourceName: "Business")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Communication = Program(title: "Communication & Media", banner: #imageLiteral(resourceName: "Communication")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Education = Program(title: "Education", banner: #imageLiteral(resourceName: "Education")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Engineering = Program(title: "Engineering", banner: #imageLiteral(resourceName: "Engineering")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Finance = Program(title: "Finance & Mathematics", banner: #imageLiteral(resourceName: "Finance")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Government = Program(title: "Government & Law", banner: #imageLiteral(resourceName: "Government")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Health = Program(title: "Health & Medecine", banner: #imageLiteral(resourceName: "Health")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let History = Program(title: "History", banner: #imageLiteral(resourceName: "History")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Information = Program(title: "Information Technology", banner: #imageLiteral(resourceName: "Information")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Language = Program(title: "Language & Culture", banner: #imageLiteral(resourceName: "Language")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Ministry = Program(title: "Ministry", banner: #imageLiteral(resourceName: "Ministry")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Outdoors = Program(title: "Outdoors", banner: #imageLiteral(resourceName: "Outdoors")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Social = Program(title: "Social Sciences", banner: #imageLiteral(resourceName: "Social")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Sustainability = Program(title: "Sustainability", banner: #imageLiteral(resourceName: "Sustainability")) else {
+            fatalError("Unable to instantiate")
+        }
 
-        guard let ACCT = Program(title: "Accounting", code: "ACCT", banner: #imageLiteral(resourceName: "ACCT") )else {
-            fatalError("Unable to instantiate")
-        }
-        guard let EDUC = Program(title: "Education", code: "EDUC", banner: #imageLiteral(resourceName: "EDUC"))else {
-            fatalError("Unable to instantiate")
-        }
-        guard let ART = Program(title: "Art (Business)", code: "ART", banner: #imageLiteral(resourceName: "ART"))else {
-            fatalError("Unable to instantiate")
-        }
-        guard let APHS = Program(title: "Applied Health Sciences", code: "APHS", banner: #imageLiteral(resourceName: "APHS"))else {
-            fatalError("Unable to instantiate")
-        }
-
-        programs += [ACCT, APHS, ART, EDUC]
+        programs += [Art, Business, Communication, Education, Engineering, Finance, Government, Health, History, Information, Language, Ministry, Outdoors, Social, Sustainability]
     }
     
     override func viewDidLoad() {
@@ -79,8 +112,6 @@ class AllProgramsTableViewController: UITableViewController {
         
         let program = programs[indexPath.row]
         
-        
-        cell.dptCode.text = program.code
         cell.dptTitle.text = program.title
         cell.dptBanner.image = program.banner
         
@@ -90,7 +121,7 @@ class AllProgramsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let programName: String = self.programs[indexPath.row].title
-        let alert = UIAlertController.init(title: "Add Program", message: "Do you want to add \(programName) to your courses?", preferredStyle: UIAlertControllerStyle.alert)
+        let alert = UIAlertController.init(title: "Subscribe", message: "Suscribe to \(programName)?", preferredStyle: UIAlertControllerStyle.alert)
         
         let action1 = UIAlertAction(title: "Yes", style: .default)
         let action2 = UIAlertAction(title: "Cancel", style: .cancel)

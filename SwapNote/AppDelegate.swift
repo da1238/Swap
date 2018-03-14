@@ -14,15 +14,19 @@ import FirebaseAuth
 import FacebookLogin
 import FacebookCore
 import FirebaseFirestore
+import GoogleSignIn
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegate, GIDSignInDelegate{
+    
     var window: UIWindow?
+    var databaseRef: DatabaseReference!
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
         Database.database().isPersistenceEnabled = true
  
         // Facebook Login
@@ -30,13 +34,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegat
         
         // Remain signed in
         if Auth.auth().currentUser != nil{
-            let storyboad = UIStoryboard(name: "Main", bundle: nil)
-            let initialVC:UITabBarController = storyboad.instantiateViewController(withIdentifier: "dashboardView") as! UITabBarController
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let initialVC:UITabBarController = storyboard.instantiateViewController(withIdentifier: "dashboardView") as! UITabBarController
             self.window = UIWindow(frame: UIScreen.main.bounds)
             self.window?.rootViewController = initialVC
             self.window?.makeKeyAndVisible()
         }
-        
+    
         // NavBar customization
         
 //        UIApplication.shared.statusBarStyle = .lightContent
@@ -50,9 +54,68 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegat
         
         return true
     }
+
+
+func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+    // ...
+    if let error = error {
+        print(error)
+        return
+    }
     
+    guard let authentication = user.authentication else { return }
+    let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                   accessToken: authentication.accessToken)
+    // ...
+    
+    Auth.auth().signIn(with: credential) { (user, error) in
+        if let error = error {
+            print(error)
+            return
+        }
+        // User is signed in
+        self.databaseRef = Database.database().reference()
+        self.databaseRef.child("users").child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            let snapshot = snapshot.value as? NSDictionary
+            if(snapshot == nil){
+                self.databaseRef.child("users").child(user!.uid).child("first_name").setValue(user?.displayName)
+                self.databaseRef.child("users").child(user!.uid).child("last_name").setValue("")
+                self.databaseRef.child("users").child(user!.uid).child("bio").setValue("")
+                self.databaseRef.child("users").child(user!.uid).child("user_photo").setValue("")
+                self.databaseRef.child("users").child(user!.uid).child("user_rating").setValue("")
+                self.databaseRef.child("users").child(user!.uid).child("username").setValue("")
+                self.databaseRef.child("users").child(user!.uid).child("email").setValue(user?.email)
+            }
+            else{
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let initialVC:UITabBarController = storyboard.instantiateViewController(withIdentifier: "dashboardView") as! UITabBarController
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                self.window?.rootViewController = initialVC
+                self.window?.makeKeyAndVisible()
+            }
+        })
+
+
+    }
+}
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        // Perform any operations when the user disconnects from app here.
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
+    }
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        return SDKApplicationDelegate.shared.application(app, open: url, options:options)
+        return GIDSignIn.sharedInstance().handle(url,
+                                                 sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
+                                                 annotation: [:])
+        
+//        return SDKApplicationDelegate.shared.application(app, open: url, options:options)
+        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

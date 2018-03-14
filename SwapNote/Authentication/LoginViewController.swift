@@ -10,9 +10,10 @@ import UIKit
 import FirebaseAuth
 import FacebookLogin
 import FacebookCore
+import GoogleSignIn
 
 
-class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate{
+class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate, GIDSignInUIDelegate{
     
     //MARK: Variables
      var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
@@ -25,6 +26,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        GIDSignIn.sharedInstance().uiDelegate = self
         
         // Hide keyboard on Done
         self.password.delegate = self;

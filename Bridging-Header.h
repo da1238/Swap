@@ -13,3 +13,5 @@
 #endif /* Bridging_Header_h */
 
 #import <JSQMessagesViewController/JSQMessages.h>
+#import <GoogleSignIn/GoogleSignIn.h>
+

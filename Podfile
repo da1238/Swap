@@ -13,6 +13,7 @@ target 'SwapNote' do
   pod 'Firebase/Firestore'
   pod 'Firebase/Storage'
   pod 'JSQMessagesViewController'
+  pod 'GoogleSignIn'
   
 
 end

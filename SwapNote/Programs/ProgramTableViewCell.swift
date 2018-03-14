@@ -11,7 +11,6 @@ import UIKit
 class ProgramTableViewCell: UITableViewCell {
     
     //MARK: Properties
-    @IBOutlet weak var dptCode: UILabel!
     @IBOutlet weak var dptTitle: UILabel!
     @IBOutlet weak var dptBanner: UIImageView!
     

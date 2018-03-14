@@ -135,9 +135,14 @@ class FeedTableViewController: UITableViewController {
             
             let storageRef = Storage.storage().reference().child("profile_picture").child(uid)
             storageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                if (data == nil) {
+                    cell.profilePicture.image = #imageLiteral(resourceName: "UserIcon")
+                }
+                else {
                 let pic = UIImage(data: post.photo)
                 cell.profilePicture.image = pic
                 cell.activityIndicator.stopAnimating()
+                }
             }
         }
         

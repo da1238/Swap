@@ -13,20 +13,18 @@ class Program {
     //MARK: Properties
     
     var title: String
-    var code: String
     var banner: UIImage
     
     //MARK: Initializers
     
-    init?(title: String, code: String, banner: UIImage) {
+    init?(title: String, banner: UIImage) {
         // Initialization should fail if there is no name or if the rating is negative.
-        if title.isEmpty || code.isEmpty  {
+        if title.isEmpty{
             return nil
         }
         
         //Initialize stored properties
         self.title = title
-        self.code = code
         self.banner = banner
         
         

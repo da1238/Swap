@@ -60,12 +60,16 @@ class HomePageViewController: UIViewController {
     func setupProfile(){
         
         if let uid = Auth.auth().currentUser?.uid{
-            
             let storageRef = Storage.storage().reference().child("profile_picture").child(uid)
             storageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                if (data == nil) {
+                    self.userProfilePic.image = #imageLiteral(resourceName: "UserIcon")
+                }
+                else {
                 let pic = UIImage(data: data!)
                 self.userProfilePic.image = pic
                 self.photoActivityIndicator.stopAnimating()
+                }
             }
             
             databaseRef.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in

@@ -173,7 +173,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                         }
                         let profileImageUrl = metadata?.downloadURL()?.absoluteString
                         let userReference = self.databaseRef.child("users").child(uid!)
-                        let values = ["first_name": "N/A", "last_name": "N/A", "email": email, "username": username, "bio": "N/A", "user_photo": profileImageUrl, "user_rating": "0.0"]
+                        let values = ["first_name": "First", "last_name": "Last Name", "email": email, "username": username, "bio": "Tell us a little bit about yourself.", "user_photo": profileImageUrl, "user_rating": "0.0"]
                         
                         userReference.updateChildValues(values, withCompletionBlock: {(error, ref) in
                             if error != nil {

@@ -66,9 +66,14 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
             
             let storageRef = Storage.storage().reference().child("profile_picture").child(uid)
             storageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                if (data == nil) {
+                    self.profilePicture.image = #imageLiteral(resourceName: "UserIcon")
+                }
+                else {
                 let pic = UIImage(data: data!)
                 self.profilePicture.image = pic
                 self.photoActivityIndicator.stopAnimating()
+                }
             }
             databaseRef.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dict = snapshot.value as? [String: AnyObject]

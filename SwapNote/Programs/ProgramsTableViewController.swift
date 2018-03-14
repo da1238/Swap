@@ -27,16 +27,22 @@ class ProgramsTableViewController: UITableViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
         
-        loadSamplePrograms()
+        loadPrograms()
     }
     
-    private func loadSamplePrograms(){
+    private func loadPrograms(){
   
-        guard let CIS = Program(title: "Computer Information Science", code: "CIS", banner: #imageLiteral(resourceName: "CIS")) else {
+        guard let Language = Program(title: "Language & Culture", banner: #imageLiteral(resourceName: "Language")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Outdoors = Program(title: "Outdoors", banner: #imageLiteral(resourceName: "Outdoors")) else {
+            fatalError("Unable to instantiate")
+        }
+        guard let Sustainability = Program(title: "Sustainability", banner: #imageLiteral(resourceName: "Sustainability")) else {
             fatalError("Unable to instantiate")
         }
         
-        programs += [CIS]
+        programs += [Language, Outdoors, Sustainability]
     }
     
     override func didReceiveMemoryWarning() {
@@ -68,8 +74,6 @@ class ProgramsTableViewController: UITableViewController {
         
         let program = programs[indexPath.row]
         
-        
-        cell.dptCode.text = program.code
         cell.dptTitle.text = program.title
         cell.dptBanner.image = program.banner
         
