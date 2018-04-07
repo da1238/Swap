@@ -7,26 +7,26 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
-class Course {
+class Course{
     
     //MARK: Properties
-    
+    var department: String
     var code: Int
     var name: String
-    var program: String
+    var notes: [Note]
+    var ref: DocumentReference!
     
     //MARK: Initialization
-    init?(name: String, code: Int, program: String) {
-        
-        if name.isEmpty || code < 0 || program.isEmpty{
+    init?(name: String, department: String, code: Int, notes: [Note]) {
+        if name.isEmpty || department.isEmpty {
             return nil
         }
         
-        //Initialize stored properties
+        self.department = department
         self.name = name
         self.code = code
-        self.program = program
+        self.notes = notes
     }
-
 }

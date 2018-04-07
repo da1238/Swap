@@ -14,6 +14,7 @@ target 'SwapNote' do
   pod 'Firebase/Storage'
   pod 'JSQMessagesViewController'
   pod 'GoogleSignIn'
+  pod 'DZNEmptyDataSet'
   
 
 end

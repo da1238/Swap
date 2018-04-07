@@ -11,24 +11,34 @@ import FirebaseAuth
 import FacebookLogin
 import FacebookCore
 import GoogleSignIn
+import FirebaseDatabase
+import Firebase
+import FirebaseCore
+import FBSDKCoreKit
+import GoogleSignIn
 
 
-class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate, GIDSignInUIDelegate{
+class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate, LoginButtonDelegate, GIDSignInDelegate, GIDSignInUIDelegate{
     
     //MARK: Variables
-     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
+    var databaseRef: DatabaseReference!
+    var dict : [String : AnyObject]!
     
     
     //MARK: Properties
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var logInBtn: UIButton!
+    @IBOutlet weak var signInButton: GIDSignInButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
         GIDSignIn.sharedInstance().uiDelegate = self
-        
+
         // Hide keyboard on Done
         self.password.delegate = self;
         self.email.delegate = self;
@@ -38,50 +48,174 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
         email.delegate = self
         
         // Login button Customize
-        logInBtn.layer.cornerRadius = 15
+        logInBtn.layer.cornerRadius = logInBtn.frame.size.height/2
+        logInBtn.layer.borderWidth = 2
+        logInBtn.layer.borderColor = UIColor(red:0.00, green:0.80, blue:0.61, alpha:1.0).cgColor
         
         // Facebook Login Button
- 
-    }
-    
-    
-    // Customize text fields
-    override func viewDidLayoutSubviews() {
+        let loginButton = LoginButton(readPermissions: [ .publicProfile ])
+        loginButton.frame = CGRect(x: 95, y: 535, width: 192, height: 35)
+        view.addSubview(loginButton)
+        loginButton.delegate = self as LoginButtonDelegate
         
-        let lineColor = UIColor.lightGray
-        self.password.setBottomLine(borderColor: lineColor)
-        self.email.setBottomLine(borderColor: lineColor)
+        // Google Button Customize
+        signInButton.style = GIDSignInButtonStyle.wide
+        
         
     }
     
-    // Hide Keyboard on touch
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+    // White Status Bar Font
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
-    
-    func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    func dismissKeyboard (_ sender: UITapGestureRecognizer) {
-        email.resignFirstResponder()
-        password.resignFirstResponder()
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == email{
-            password.becomeFirstResponder()
+    // Google Auth
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        
+        // Activity Indicator
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        
+        if error == nil {
+            print(error)
+        } else {
+            print("User created")
+            self.activityIndicator.stopAnimating()
         }
-        else{
-            textField.resignFirstResponder()
-        }
-        return false
+        
+        
+        guard let authentication = user?.authentication else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                       accessToken: authentication.accessToken)
+        
+        Auth.auth().signIn(with: credential, completion: { (user, error) in
+            if error != nil {
+                print(error!)
+            }
+            
+            // User is signed in
+            self.databaseRef = Database.database().reference()
+            self.databaseRef.child("users").child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                let snapshot = snapshot.value as? NSDictionary
+                if(snapshot == nil){
+                    
+                    self.databaseRef.child("users").child(user!.uid).child("first_name").setValue(user?.displayName)
+                    self.databaseRef.child("users").child(user!.uid).child("last_name").setValue("")
+                    self.databaseRef.child("users").child(user!.uid).child("email").setValue(user?.email)
+                    self.databaseRef.child("users").child(user!.uid).child("username").setValue("floridaman")
+                    self.databaseRef.child("users").child(user!.uid).child("major").setValue("Unspecified Major")
+                    self.databaseRef.child("users").child(user!.uid).child("college").setValue("Messiah College")
+                    self.databaseRef.child("users").child(user!.uid).child("user_photo").setValue("")
+                    self.databaseRef.child("users").child(user!.uid).child("user_rating").setValue("0.0")
+                    self.databaseRef.child("users").child(user!.uid).child("phone").setValue("(000)-000-000")
+                    
+                }
+            })
+            self.activityIndicator.stopAnimating()
+            self.performSegue(withIdentifier: "signIn", sender: self)
+        })
+        
     }
     
     
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        if error == nil {
+            print(error)
+        }
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
+    }
     
-    // Login
+    //Facebook Auth
+    func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
+        
+        // Activity Indicator
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        
+        view.addSubview(activityIndicator)
+        
+        switch result {
+        case .success:
+            self.activityIndicator.startAnimating()
+            let accessToken = AccessToken.current
+            guard let accessTokenString = accessToken?.authenticationToken else { return }
+            
+            let credentials = FacebookAuthProvider.credential(withAccessToken: accessTokenString)
+            Auth.auth().signIn(with: credentials, completion: { (user, error) in
+                if error != nil{
+                    print(error!)
+                    return
+                }
+                
+                // User is signed in
+                self.databaseRef = Database.database().reference()
+                self.databaseRef.child("users").child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    let snapshot = snapshot.value as? NSDictionary
+                    if(snapshot == nil){
+                        if((FBSDKAccessToken.current()) != nil) {
+                            
+                            FBSDKGraphRequest(graphPath: "me",
+                                              parameters: ["fields": "id, name, first_name, last_name, picture.type(large), email , gender"]).start(completionHandler: { (connection, result, error) -> Void in
+                                                if (error == nil) {
+                                                    self.dict = result as! [String : AnyObject]
+                                                    let firstName = self.dict["first_name"] as? String
+                                                    let lastName = self.dict["last_name"] as? String
+                                                    let profilePicture = self.dict["picture.type(large)"] as? String
+                                                    let email = self.dict["email"] as? String
+                                                    
+                                                    self.databaseRef.child("users").child(user!.uid).child("first_name").setValue(firstName)
+                                                    self.databaseRef.child("users").child(user!.uid).child("last_name").setValue(lastName)
+                                                    self.databaseRef.child("users").child(user!.uid).child("email").setValue(email)
+                                                    self.databaseRef.child("users").child(user!.uid).child("username").setValue(firstName)
+                                                    self.databaseRef.child("users").child(user!.uid).child("major").setValue("Unspecified Major")
+                                                    self.databaseRef.child("users").child(user!.uid).child("college").setValue("Messiah College")
+                                                    self.databaseRef.child("users").child(user!.uid).child("user_photo").setValue(profilePicture)
+                                                    self.databaseRef.child("users").child(user!.uid).child("user_rating").setValue("0.0")
+                                                    self.databaseRef.child("users").child(user!.uid).child("phone").setValue("(000)-000-000")
+                                                    
+                                                }})
+                        }
+                        
+                    }
+                })
+                self.getFBUserData()
+                self.activityIndicator.stopAnimating()
+                self.performSegue(withIdentifier: "signIn", sender: self)
+            })
+        default:
+            break
+        }
+    }
+    
+    func getFBUserData(){
+        if((FBSDKAccessToken.current()) != nil) {
+            
+            FBSDKGraphRequest(graphPath: "me",
+                              parameters: ["fields": "id, name, first_name, last_name, picture.type(large), email , gender"]).start(completionHandler: { (connection, result, error) -> Void in
+                                if (error == nil) {
+                                    self.dict = result as! [String : AnyObject]
+                                    print(result!)
+                                    print(self.dict)
+                                    
+                                }})
+        }
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: LoginButton) {
+        print("Logged out of Facebook")
+    }
+    
+    // Firebase Login
     @IBAction func logIn(_ sender: Any) {
         
         // Activity Indicator
@@ -144,6 +278,39 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
         }))
     }
     
+    // Customize text fields
+    override func viewDidLayoutSubviews() {
+        
+        let lineColor = UIColor.lightGray
+        self.password.setBottomLine(borderColor: lineColor)
+        self.email.setBottomLine(borderColor: lineColor)
+        
+    }
+    
+    // Hide Keyboard on touch
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        email.resignFirstResponder()
+        password.resignFirstResponder()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == email{
+            password.becomeFirstResponder()
+        }
+        else{
+            textField.resignFirstResponder()
+        }
+        return false
+    }
     
     /*
      // MARK: - Navigation

@@ -9,35 +9,21 @@
 import UIKit
 import os.log
 
-class NotesTableViewController: UITableViewController {
+class NotesTableViewController: UITableViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     
-    //MARK: Properties
-    
+    //MARK: Properties    
     var note: Note?
-    
     var notes = [Note]()
     
-    private func loadSampleNotes(){
-        
-        guard let note1 = Note(name: "Hello, world!", createdBy: "da1238", courseTitle: "Programing 1", courseNumber: 181) else {
-            fatalError("Unable to instantiate")
-        }
-        
-        guard let note2 = Note(name: "Arrays", createdBy: "doodle20091", courseTitle: "Programming II", courseNumber: 231) else {
-            fatalError("Unable to instantiate")
-        }
-        
-        notes += [note1, note2]
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let note = note{
-        navigationItem.title = note.courseTitle
-        }
-        
-        
+        // Empty Data Set
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+        tableView.tableFooterView = UIView()
+ 
         // Navigation Bar customization
         navigationController?.navigationBar.prefersLargeTitles = true
         
@@ -48,8 +34,6 @@ class NotesTableViewController: UITableViewController {
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
-        
-        loadSampleNotes()
     }
 
     override func didReceiveMemoryWarning() {
@@ -81,8 +65,7 @@ class NotesTableViewController: UITableViewController {
         let note = notes[indexPath.row]
         
         cell.noteTitle.text = note.name
-        cell.dateCreated.text = note.dateCreated.toString(dateFormat: "dd/MM/YYYY")
-        cell.ownedBy.text = "Created by: " + note.createdBy
+
         
         return cell
     }
@@ -111,6 +94,23 @@ class NotesTableViewController: UITableViewController {
         read.backgroundColor = UIColor.blue
         
         return UISwipeActionsConfiguration(actions: [read])
+    }
+    
+    // Empty Data Sets
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        let str = "No Notes Yet."
+        let attrs = [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)]
+        return NSAttributedString(string: str, attributes: attrs)
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        let str = "Tap the the plus button above to browse and add a note."
+        let attrs = [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)]
+        return NSAttributedString(string: str, attributes: attrs)
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return UIImage(named: "emptyNotes")
     }
     
     /*

@@ -45,7 +45,7 @@ class NewPostViewController: UIViewController, UITextViewDelegate, UITextFieldDe
         photoActivityIndicator.startAnimating()
         
         userProfilePic.contentMode = UIViewContentMode.scaleAspectFit
-        userProfilePic.layer.cornerRadius = 25
+        userProfilePic.layer.cornerRadius = userProfilePic.frame.size.height/2
         userProfilePic.layer.masksToBounds = true
         
          setupProfile()
@@ -128,7 +128,6 @@ class NewPostViewController: UIViewController, UITextViewDelegate, UITextFieldDe
                     }
                 })
             })
-            
         }
         dismiss(animated: true, completion: nil)
     }

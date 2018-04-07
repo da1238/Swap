@@ -12,33 +12,34 @@ import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
 
-class FeedTableViewController: UITableViewController {
+class FeedTableViewController: UITableViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate{
     
     //MARK: Properties
     let databaseRef = Database.database().reference()
     
     //MARK: Variables
-    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
+    
+    //Loading Screen
+    let loadingView = UIView()
+    let loadingLabel = UILabel()
+    let spinner = UIActivityIndicatorView()
+    
+    var noPic: UIImage!
     
     // Database Reference
     var database = Firestore.firestore()
     var postArray = [Post]()
     
     override func viewDidLoad() {
-    
-        self.refreshControl?.addTarget(self, action: #selector(FeedTableViewController.updateFeed), for: UIControlEvents.valueChanged)
-        
-        // Activity Indicator
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
-        
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-//        UIApplication.shared.beginIgnoringInteractionEvents()
         
         super.viewDidLoad()
-
+        
+        //Refresh Control
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl?.addTarget(self, action: #selector(FeedTableViewController.updateData), for: UIControlEvents.valueChanged)
+        tableView.addSubview(refreshControl!)
+        
+        setLoadingScreen()
         loadData()
         updateFeed()
         
@@ -47,29 +48,52 @@ class FeedTableViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(composePressed))
         
+        // Empty Data Set
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+        tableView.tableFooterView = UIView()
+        
     }
     
     func loadData(){
         
         database.collection("posts").getDocuments() {
             querySnapshot, error in
+            self.setLoadingScreen()
             if let error = error {
                 print("\(error.localizedDescription)")
-                self.refreshControl?.endRefreshing()
             } else{
                 self.postArray = querySnapshot!.documents.flatMap({Post(dictionary: $0.data())})
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.activityIndicator.stopAnimating()
-//                    UIApplication.shared.endIgnoringInteractionEvents()
-                    self.refreshControl?.endRefreshing()
+                    if self.postArray.count == 0{
+                        self.removeLoadingScreen()
+                    }else{
+                        self.removeLoadingScreen()
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }
-        
     }
     
-    @objc func updateFeed(){
+    @objc func updateData(){
+        
+        database.collection("posts").getDocuments() {
+            querySnapshot, error in
+            if let error = error {
+                print("\(error.localizedDescription)")
+            } else{
+                self.postArray = querySnapshot!.documents.flatMap({Post(dictionary: $0.data())})
+                DispatchQueue.main.async {
+                    self.refreshControl?.endRefreshing()
+                    self.tableView.reloadData()
+                    
+                }
+            }
+        }
+    }
+    
+    func updateFeed(){
         
         database.collection("posts").whereField("timeStamp", isGreaterThan: Date())
             .addSnapshotListener{
@@ -84,7 +108,6 @@ class FeedTableViewController: UITableViewController {
                         self.postArray.append(Post(dictionary: diff.document.data())!)
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
-                            self.refreshControl?.endRefreshing()
                         }
                     }
                 }
@@ -93,10 +116,37 @@ class FeedTableViewController: UITableViewController {
     
     
     @objc func composePressed(sender: UIBarButtonItem){
-
+        
         performSegue(withIdentifier: "newPost", sender: nil)
     }
+
+    // Set the activity indicator into the main view
+    private func setLoadingScreen() {
+        
+        // Sets the view which contains the loading text and the spinner
+        loadingView.frame = CGRect(x: tableView.frame.origin.x, y: tableView.frame.origin.y, width: tableView.frame.width, height: tableView.frame.height-200)
+        loadingView.backgroundColor = UIColor.white
+        
+        // Sets spinner
+        spinner.activityIndicatorViewStyle = .gray
+        spinner.center = self.loadingView.center
+        spinner.startAnimating()
+        
+        // Adds text and spinner to the view
+        loadingView.addSubview(spinner)
+        tableView.addSubview(loadingView)
+        
+    }
     
+    // Remove the activity indicator from the main view
+    private func removeLoadingScreen() {
+        
+        // Hides and stops the text and the spinner
+        spinner.stopAnimating()
+        spinner.isHidden = true
+        loadingView.isHidden = true
+        
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -111,7 +161,7 @@ class FeedTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    
+        
         return postArray.count
     }
     
@@ -119,12 +169,12 @@ class FeedTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         
-   
+        
         let cell: FeedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! FeedTableViewCell
         let post = postArray[indexPath.row]
         
         cell.activityIndicator.startAnimating()
-        cell.lblPost.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        cell.lblPost.textContainerInset = UIEdgeInsetsMake(0, 0, 10, 0)
         cell.lblPost?.text = post.content
         cell.lblUserName?.text = post.userName
         cell.lblFirstName.text = post.name
@@ -136,12 +186,12 @@ class FeedTableViewController: UITableViewController {
             let storageRef = Storage.storage().reference().child("profile_picture").child(uid)
             storageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 if (data == nil) {
-                    cell.profilePicture.image = #imageLiteral(resourceName: "UserIcon")
+                    cell.profilePicture.image = self.noPic
                 }
                 else {
-                let pic = UIImage(data: post.photo)
-                cell.profilePicture.image = pic
-                cell.activityIndicator.stopAnimating()
+                    let pic = UIImage(data: post.photo)
+                    cell.profilePicture.image = pic
+                    cell.activityIndicator.stopAnimating()
                 }
             }
         }
@@ -151,59 +201,29 @@ class FeedTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
+        updateFeed()
         // Auto resizing Table cells
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
         
     }
     
+    // Empty Data Sets
     
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        let str = "Welcome to the Feed."
+        let attrs = [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)]
+        return NSAttributedString(string: str, attributes: attrs)
+    }
     
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        let str = "The latest posts from your subscribed programs will appear here."
+        let attrs = [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)]
+        return NSAttributedString(string: str, attributes: attrs)
+    }
     
-    
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return UIImage(named: "emptyFeed")
+    }
     
 }

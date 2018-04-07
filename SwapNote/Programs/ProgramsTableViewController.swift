@@ -32,17 +32,14 @@ class ProgramsTableViewController: UITableViewController {
     
     private func loadPrograms(){
   
-        guard let Language = Program(title: "Language & Culture", banner: #imageLiteral(resourceName: "Language")) else {
-            fatalError("Unable to instantiate")
-        }
-        guard let Outdoors = Program(title: "Outdoors", banner: #imageLiteral(resourceName: "Outdoors")) else {
+        guard let Art = Program(title: "Art & Performing Arts", banner: #imageLiteral(resourceName: "Art")) else {
             fatalError("Unable to instantiate")
         }
         guard let Sustainability = Program(title: "Sustainability", banner: #imageLiteral(resourceName: "Sustainability")) else {
             fatalError("Unable to instantiate")
         }
         
-        programs += [Language, Outdoors, Sustainability]
+        programs += [Art, Sustainability]
     }
     
     override func didReceiveMemoryWarning() {

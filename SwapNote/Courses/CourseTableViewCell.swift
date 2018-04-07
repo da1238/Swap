@@ -11,6 +11,7 @@ import UIKit
 class CourseTableViewCell: UITableViewCell {
     
     //MARK: Properties
+    
     @IBOutlet weak var courseCode: UILabel!
     @IBOutlet weak var courseName: UILabel!
     

@@ -25,7 +25,7 @@ class FeedTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         profilePicture.contentMode = UIViewContentMode.scaleAspectFit
-        profilePicture.layer.cornerRadius = 20
+        profilePicture.layer.cornerRadius = profilePicture.frame.size.height/2
         profilePicture.layer.masksToBounds = true
         
     }
@@ -35,6 +35,6 @@ class FeedTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    
     
 }

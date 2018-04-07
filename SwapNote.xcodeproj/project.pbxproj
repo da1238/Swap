@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		1598E8A09854991F2740B5A5 /* Pods_SwapNote.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2E6C7CE4B066E66AF9CC378 /* Pods_SwapNote.framework */; };
-		4D2EAA9B2056E87000F9CA41 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2EAA9A2056E87000F9CA41 /* Section.swift */; };
-		4D2EAA9D2056E98700F9CA41 /* Expandable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2EAA9C2056E98700F9CA41 /* Expandable.swift */; };
-		4D2EAA9F2056EBF500F9CA41 /* AllCoursesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2EAA9E2056EBF500F9CA41 /* AllCoursesViewController.swift */; };
+		4D0D721A2069CA60003B87B4 /* LikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D72192069CA5F003B87B4 /* LikeButton.swift */; };
+		4D864F60206E0A99001B6785 /* AllCoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D864F5E206E0A99001B6785 /* AllCoursesTableViewController.swift */; };
+		4D864F61206E0A99001B6785 /* AllCoursesTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D864F5F206E0A99001B6785 /* AllCoursesTableViewController.xib */; };
 		632F2546202F79CD005DD8FA /* Contants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632F2545202F79CD005DD8FA /* Contants.swift */; };
 		632F2548202F7BE0005DD8FA /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632F2547202F7BE0005DD8FA /* ChatViewController.swift */; };
 		632F254A202FA8B2005DD8FA /* InboxTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632F2549202FA8B2005DD8FA /* InboxTableViewController.swift */; };
@@ -32,7 +32,6 @@
 		63665E741FDF6B1D00296A58 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63665E731FDF6B1D00296A58 /* SignUpViewController.swift */; };
 		63665E7A1FDF6B7A00296A58 /* NotesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63665E791FDF6B7A00296A58 /* NotesTableViewController.swift */; };
 		63665E7C1FDF6BA300296A58 /* NewNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63665E7B1FDF6BA300296A58 /* NewNoteViewController.swift */; };
-		63665E881FDF6E0800296A58 /* AllNotesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63665E871FDF6E0800296A58 /* AllNotesTableViewController.swift */; };
 		63665E8C1FDF837F00296A58 /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63665E8B1FDF837F00296A58 /* HomePageViewController.swift */; };
 		63982EA61FED793A00A012D4 /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63982EA51FED793A00A012D4 /* Course.swift */; };
 		63982EA81FED7E0C00A012D4 /* CourseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63982EA71FED7E0C00A012D4 /* CourseTableViewCell.swift */; };
@@ -40,7 +39,6 @@
 		63982EB01FF19ACC00A012D4 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63982EAF1FF19ACC00A012D4 /* TabBarController.swift */; };
 		63982EB21FF1A0AF00A012D4 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63982EB11FF1A0AF00A012D4 /* Note.swift */; };
 		63982EB41FF1A44800A012D4 /* NoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63982EB31FF1A44800A012D4 /* NoteTableViewCell.swift */; };
-		63C00372202B7BE900A763E5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C00371202B7BE900A763E5 /* User.swift */; };
 		63C1B9DD1FEC4B75001401A8 /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C1B9DC1FEC4B75001401A8 /* Program.swift */; };
 		63C1B9DF1FEC5580001401A8 /* ProgramTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C1B9DE1FEC5580001401A8 /* ProgramTableViewCell.swift */; };
 		63C1B9E21FEC57A1001401A8 /* AllProgramsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C1B9E01FEC57A1001401A8 /* AllProgramsTableViewController.swift */; };
@@ -73,10 +71,10 @@
 
 /* Begin PBXFileReference section */
 		1973CCC77CCD4474D28122FE /* Pods-SwapNote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwapNote.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwapNote/Pods-SwapNote.release.xcconfig"; sourceTree = "<group>"; };
+		4D0D72192069CA5F003B87B4 /* LikeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeButton.swift; sourceTree = "<group>"; };
 		4D2EAA9720556EC500F9CA41 /* SwapNote.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwapNote.entitlements; sourceTree = "<group>"; };
-		4D2EAA9A2056E87000F9CA41 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
-		4D2EAA9C2056E98700F9CA41 /* Expandable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expandable.swift; sourceTree = "<group>"; };
-		4D2EAA9E2056EBF500F9CA41 /* AllCoursesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllCoursesViewController.swift; sourceTree = "<group>"; };
+		4D864F5E206E0A99001B6785 /* AllCoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllCoursesTableViewController.swift; sourceTree = "<group>"; };
+		4D864F5F206E0A99001B6785 /* AllCoursesTableViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AllCoursesTableViewController.xib; sourceTree = "<group>"; };
 		632F2544202F76BA005DD8FA /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		632F2545202F79CD005DD8FA /* Contants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contants.swift; sourceTree = "<group>"; };
 		632F2547202F7BE0005DD8FA /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -105,7 +103,6 @@
 		63665E731FDF6B1D00296A58 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		63665E791FDF6B7A00296A58 /* NotesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesTableViewController.swift; sourceTree = "<group>"; };
 		63665E7B1FDF6BA300296A58 /* NewNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewNoteViewController.swift; sourceTree = "<group>"; };
-		63665E871FDF6E0800296A58 /* AllNotesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNotesTableViewController.swift; sourceTree = "<group>"; };
 		63665E8B1FDF837F00296A58 /* HomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewController.swift; sourceTree = "<group>"; };
 		63982EA51FED793A00A012D4 /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
 		63982EA71FED7E0C00A012D4 /* CourseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseTableViewCell.swift; sourceTree = "<group>"; };
@@ -113,7 +110,6 @@
 		63982EAF1FF19ACC00A012D4 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		63982EB11FF1A0AF00A012D4 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		63982EB31FF1A44800A012D4 /* NoteTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NoteTableViewCell.swift; path = SwapNote/Notes/NoteTableViewCell.swift; sourceTree = SOURCE_ROOT; };
-		63C00371202B7BE900A763E5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		63C1B9DC1FEC4B75001401A8 /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
 		63C1B9DE1FEC5580001401A8 /* ProgramTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramTableViewCell.swift; sourceTree = "<group>"; };
 		63C1B9E01FEC57A1001401A8 /* AllProgramsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllProgramsTableViewController.swift; sourceTree = "<group>"; };
@@ -154,15 +150,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4D2EAA992056E83C00F9CA41 /* ExpandableHeaderView */ = {
-			isa = PBXGroup;
-			children = (
-				4D2EAA9A2056E87000F9CA41 /* Section.swift */,
-				4D2EAA9C2056E98700F9CA41 /* Expandable.swift */,
-			);
-			path = ExpandableHeaderView;
-			sourceTree = "<group>";
-		};
 		630F6E561FE2F02400804DCB /* Home Page */ = {
 			isa = PBXGroup;
 			children = (
@@ -180,7 +167,6 @@
 			isa = PBXGroup;
 			children = (
 				63E060312041CF25002267B6 /* AccountTableViewController.swift */,
-				63C00371202B7BE900A763E5 /* User.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -214,7 +200,6 @@
 				4D2EAA9720556EC500F9CA41 /* SwapNote.entitlements */,
 				63665E411FDF6A5400296A58 /* AppDelegate.swift */,
 				63982EAF1FF19ACC00A012D4 /* TabBarController.swift */,
-				4D2EAA992056E83C00F9CA41 /* ExpandableHeaderView */,
 				63665E7D1FDF6BE000296A58 /* Authentication */,
 				63665E821FDF6D6900296A58 /* Programs */,
 				63665E851FDF6DBC00296A58 /* Courses */,
@@ -276,10 +261,11 @@
 			isa = PBXGroup;
 			children = (
 				63C1B9E41FEC5A3C001401A8 /* CoursesTableViewController.swift */,
-				4D2EAA9E2056EBF500F9CA41 /* AllCoursesViewController.swift */,
 				63C1B9E51FEC5A3C001401A8 /* CoursesTableViewController.xib */,
 				63982EA71FED7E0C00A012D4 /* CourseTableViewCell.swift */,
 				63982EA51FED793A00A012D4 /* Course.swift */,
+				4D864F5E206E0A99001B6785 /* AllCoursesTableViewController.swift */,
+				4D864F5F206E0A99001B6785 /* AllCoursesTableViewController.xib */,
 			);
 			path = Courses;
 			sourceTree = "<group>";
@@ -289,7 +275,6 @@
 			children = (
 				63982EA91FF17F3900A012D4 /* NoteViewController.swift */,
 				63982EB31FF1A44800A012D4 /* NoteTableViewCell.swift */,
-				63665E871FDF6E0800296A58 /* AllNotesTableViewController.swift */,
 				63982EB11FF1A0AF00A012D4 /* Note.swift */,
 				63665E7B1FDF6BA300296A58 /* NewNoteViewController.swift */,
 				63665E791FDF6B7A00296A58 /* NotesTableViewController.swift */,
@@ -305,6 +290,7 @@
 				63520D65201D9407001FBE7A /* FeedTableViewController.swift */,
 				6333116620261F6700F67EA7 /* NewPostViewController.swift */,
 				63520D67201E3400001FBE7A /* FeedTableViewCell.swift */,
+				4D0D72192069CA5F003B87B4 /* LikeButton.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -443,6 +429,7 @@
 			files = (
 				635AE783201693ED00C55BB4 /* LabChapter3.pdf in Resources */,
 				63E961291FE1B3A70015227E /* Info.plist in Resources */,
+				4D864F61206E0A99001B6785 /* AllCoursesTableViewController.xib in Resources */,
 				63C1B9E71FEC5A3C001401A8 /* CoursesTableViewController.xib in Resources */,
 				63C1B9F21FEC5AB2001401A8 /* ProgramsTableViewController.xib in Resources */,
 				63665E4C1FDF6A5400296A58 /* LaunchScreen.storyboard in Resources */,
@@ -497,6 +484,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-SwapNote/Pods-SwapNote-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
@@ -518,6 +506,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
@@ -568,11 +557,10 @@
 				63C1B9F11FEC5AB2001401A8 /* ProgramsTableViewController.swift in Sources */,
 				63520D68201E3400001FBE7A /* FeedTableViewCell.swift in Sources */,
 				63665E741FDF6B1D00296A58 /* SignUpViewController.swift in Sources */,
-				4D2EAA9F2056EBF500F9CA41 /* AllCoursesViewController.swift in Sources */,
 				632F2546202F79CD005DD8FA /* Contants.swift in Sources */,
 				63520D66201D9407001FBE7A /* FeedTableViewController.swift in Sources */,
-				63C00372202B7BE900A763E5 /* User.swift in Sources */,
 				63982EB41FF1A44800A012D4 /* NoteTableViewCell.swift in Sources */,
+				4D864F60206E0A99001B6785 /* AllCoursesTableViewController.swift in Sources */,
 				632F254C202FAC02005DD8FA /* InboxTableViewCell.swift in Sources */,
 				63982EB01FF19ACC00A012D4 /* TabBarController.swift in Sources */,
 				63665E7C1FDF6BA300296A58 /* NewNoteViewController.swift in Sources */,
@@ -589,13 +577,11 @@
 				63665E8C1FDF837F00296A58 /* HomePageViewController.swift in Sources */,
 				632F254A202FA8B2005DD8FA /* InboxTableViewController.swift in Sources */,
 				63C1B9DF1FEC5580001401A8 /* ProgramTableViewCell.swift in Sources */,
-				63665E881FDF6E0800296A58 /* AllNotesTableViewController.swift in Sources */,
+				4D0D721A2069CA60003B87B4 /* LikeButton.swift in Sources */,
 				63982EA61FED793A00A012D4 /* Course.swift in Sources */,
 				63E060322041CF25002267B6 /* AccountTableViewController.swift in Sources */,
 				63665E421FDF6A5400296A58 /* AppDelegate.swift in Sources */,
 				632F2548202F7BE0005DD8FA /* ChatViewController.swift in Sources */,
-				4D2EAA9D2056E98700F9CA41 /* Expandable.swift in Sources */,
-				4D2EAA9B2056E87000F9CA41 /* Section.swift in Sources */,
 				63665E7A1FDF6B7A00296A58 /* NotesTableViewController.swift in Sources */,
 				632F254E202FACD5005DD8FA /* Chat.swift in Sources */,
 			);

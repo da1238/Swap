@@ -9,19 +9,26 @@
 import UIKit
 import FirebaseAuth
 import FirebaseCore
+import Firebase
 import FirebaseDatabase
+import FirebaseFirestore
 import FirebaseStorage
 
 class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     //MARK: Variables
     let databaseRef = Database.database().reference()
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
     var imagePicker = UIImagePickerController()
     var selectedImage: UIImage?
+    var profileImageUrl: String?
+    var courses = [Course]()
+    
+    // Database Reference
+    var database = Firestore.firestore()
     
     //MARK: Properties
     @IBOutlet weak var signUpForm: UIScrollView!
-    @IBOutlet weak var username: UITextField!
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var confirmPassword: UITextField!
@@ -42,28 +49,30 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         // Hide keyboard on Done
         self.password.delegate = self
         self.email.delegate = self
-        self.username.delegate = self
         self.confirmPassword.delegate = self
         
         // Sign Up form
-        username.delegate = self
         email.delegate = self
         password.delegate = self
         confirmPassword.delegate = self
         
         //Customize button
-        signUpButton.layer.cornerRadius = 15
+        signUpButton.layer.cornerRadius = signUpButton.frame.size.height/2
+        signUpButton.layer.borderWidth = 2
+        signUpButton.layer.borderColor = UIColor(red:0.00, green:0.80, blue:0.61, alpha:1.0).cgColor
         
         //  User photo
         userPhoto.contentMode = UIViewContentMode.scaleAspectFit
-        userPhoto.layer.cornerRadius = 45
+        userPhoto.layer.cornerRadius = userPhoto.frame.size.height/2
         userPhoto.layer.masksToBounds = true
+        userPhoto.layer.borderWidth = 2
+        userPhoto.layer.borderColor = UIColor(red:0.00, green:0.80, blue:0.61, alpha:1.0).cgColor
         
         
     }
     
     //MARK: Actions
-
+    
     @IBAction func uploadPicture(_ sender: UITapGestureRecognizer) {
         
         //Create action sheet
@@ -84,20 +93,15 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                 self.imagePicker.sourceType = UIImagePickerControllerSourceType.camera
                 self.imagePicker.allowsEditing = true
                 self.present(self.imagePicker, animated: true, completion: nil)
-
+                
             }
         }
-
+        
         actionSheet.addAction(photoGallery)
         actionSheet.addAction(camera)
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
         self.present(actionSheet, animated: true, completion: nil)
-    }
-
-    
-    @objc func dismissFullScreenImage(sender: UITapGestureRecognizer){
-        sender.view?.removeFromSuperview()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -117,7 +121,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         
         dismiss(animated: true, completion: nil)
     }
-
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
@@ -128,7 +132,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     override func viewDidLayoutSubviews() {
         
         let lineColor = UIColor.lightGray
-        self.username.setBottomLine(borderColor: lineColor)
         self.password.setBottomLine(borderColor: lineColor)
         self.confirmPassword.setBottomLine(borderColor: lineColor)
         self.email.setBottomLine(borderColor: lineColor)
@@ -145,25 +148,32 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     //MARK: Sign Up
     
     @IBAction func signUp(_ sender: Any) {
-        if confirmPassword.text == password.text{
+        // Activity Indicator
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        
+        view.addSubview(activityIndicator)
+        
+        if confirmPassword.text! == password.text! || confirmPassword.text?.count != 0 {
             Auth.auth().createUser(withEmail: email.text!, password: password.text!, completion: {(user, error) in
+                self.activityIndicator.startAnimating()
                 if error != nil{
                     let signuperrorAlert = UIAlertController(title: "Sign Up Error", message: "\(String(describing: error!.localizedDescription)) Please try again.", preferredStyle: .alert)
                     signuperrorAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.activityIndicator.stopAnimating()
                     self.present(signuperrorAlert, animated: true, completion: nil)
                     return
                 }
+                self.activityIndicator.stopAnimating()
+                self.sendEmail()
                 
                 guard let email = self.email.text else{
                     print("email error")
                     return
                 }
-
-                guard let username = self.username.text else{
-                    print("username error")
-                    return
-                }
                 
+                let user = Auth.auth().currentUser
                 let uid = user?.uid
                 let storageRef = Storage.storage().reference().child("profile_picture").child(uid!)
                 if let profileImg = self.selectedImage, let imageData = UIImageJPEGRepresentation(profileImg, 0.1){
@@ -171,66 +181,79 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                         if error != nil{
                             return
                         }
-                        let profileImageUrl = metadata?.downloadURL()?.absoluteString
-                        let userReference = self.databaseRef.child("users").child(uid!)
-                        let values = ["first_name": "First", "last_name": "Last Name", "email": email, "username": username, "bio": "Tell us a little bit about yourself.", "user_photo": profileImageUrl, "user_rating": "0.0"]
-                        
-                        userReference.updateChildValues(values, withCompletionBlock: {(error, ref) in
-                            if error != nil {
-                                print(error!)
-                                return
-                            }
-                        })
-                    })
-                } else {
-                    let passwordnomatchAlert = UIAlertController(title: "Error", message: "Passwords do not match. Please try again.", preferredStyle: .alert)
-                    passwordnomatchAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action) in
-                        self.password.text = ""
-                        self.confirmPassword.text = ""
-                    }))
-                    self.present(passwordnomatchAlert, animated: true, completion: nil)
-                }
+                        self.profileImageUrl = metadata?.downloadURL()?.absoluteString
                     })
                 }
-
-        self.sendEmail()
-        
-
-    }
-    
-    
-    func sendEmail() {
-        Auth.auth().signIn(withEmail: email.text!, password: password.text!) { (user, error) in
-            if error != nil {
-                print("Error: \(String(describing:error!.localizedDescription))")
-                return
-            }
-            Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
-                if error != nil {
-                    let emailNOTSentAlert = UIAlertController(title: "Email Verification", message: "Email Failed to send: \(String(describing: error!.localizedDescription))", preferredStyle: .alert)
-                    emailNOTSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self.present(emailNOTSentAlert, animated: true, completion: nil)
-                    self.dismiss(animated: true, completion: nil)
-                    
-                } else {
-    
-                    let emailSentAlert = UIAlertController(title: "Email Verification", message: "A verification email has been sent to your inbox.", preferredStyle: .alert)
-                    emailSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler:{(action) in
-                        self.dismiss(animated: true, completion: nil)
-                    }))
-
-                    self.present(emailSentAlert, animated: true, completion: nil)
-                }
-                do {
-                    try Auth.auth().signOut()
-                } catch {
-                    // error handling
-                }
+                let userReference = self.databaseRef.child("users").child(uid!)
+                let values = ["first_name": "Johnny",
+                              "last_name": "Appleseed",
+                              "email": email,
+                              "username": "floridaman",
+                              "major": "Unspecified Major",
+                              "college": "Messiah College",
+                              "year": "YYYY",
+                              "user_photo": self.profileImageUrl,
+                              "user_rating": "0.0",
+                              "phone": "(000)-000-0000"]
                 
+                userReference.updateChildValues(values, withCompletionBlock: {(error, ref) in
+                    if error != nil {
+                        print(error!)
+                        return
+                    }
+                })
             })
+            
+        } else {
+            let passwordnomatchAlert = UIAlertController(title: "Sign Up Error", message: "Passwords do not match or required fields are empty. Please try again.", preferredStyle: .alert)
+            passwordnomatchAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action) in
+                self.password.text = ""
+                self.confirmPassword.text = ""
+            }))
+            self.activityIndicator.stopAnimating()
+            self.present(passwordnomatchAlert, animated: true, completion: nil)
+        }
+        
+        let splitEmail = self.email.text!.split(separator: "@")
+        let username: String = splitEmail.prefix(splitEmail.count - 1).joined()
+        let courseArr = [DocumentReference]()
+        database.collection("users").document(username).setData([
+            "courses": courseArr
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
         }
     }
     
+    
+    
+    func sendEmail(){
+        Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
+            if error != nil {
+                let emailNOTSentAlert = UIAlertController(title: "Email Verification", message: "Email Failed to send: \(String(describing: error!.localizedDescription))", preferredStyle: .alert)
+                emailNOTSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(emailNOTSentAlert, animated: true, completion: nil)
+                self.dismiss(animated: true, completion: nil)
+                print(error!)
+                
+            } else {
+                let emailSentAlert = UIAlertController(title: "Email Verification", message: "A verification email has been sent to your inbox.", preferredStyle: .alert)
+                emailSentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler:{(action) in
+                    self.dismiss(animated: true, completion: nil)
+                }))
+                
+                self.present(emailSentAlert, animated: true, completion: nil)
+            }
+            do {
+                try Auth.auth().signOut()
+            } catch {
+                // error handling
+            }
+        })
+    }
     
     // Hide Keyboard on touch
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -244,15 +267,12 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     func dismissKeyboard (_ sender: UITapGestureRecognizer) {
         email.resignFirstResponder()
         password.resignFirstResponder()
-        username.resignFirstResponder()
         confirmPassword.resignFirstResponder()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
-        if textField == username{
-            email.becomeFirstResponder()
-        }else if textField == email{
+        if textField == email{
             password.becomeFirstResponder()
         } else if textField == password{
             confirmPassword.becomeFirstResponder()
@@ -266,7 +286,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         switch textField.tag{
         case 0...1:
             print("Do nothing")
-        
+            
         default:
             signUpForm.setContentOffset(CGPoint(x: 0,y: 100), animated: true)
         }

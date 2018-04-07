@@ -52,9 +52,6 @@ class AllProgramsTableViewController: UITableViewController {
         guard let Ministry = Program(title: "Ministry", banner: #imageLiteral(resourceName: "Ministry")) else {
             fatalError("Unable to instantiate")
         }
-        guard let Outdoors = Program(title: "Outdoors", banner: #imageLiteral(resourceName: "Outdoors")) else {
-            fatalError("Unable to instantiate")
-        }
         guard let Social = Program(title: "Social Sciences", banner: #imageLiteral(resourceName: "Social")) else {
             fatalError("Unable to instantiate")
         }
@@ -62,7 +59,7 @@ class AllProgramsTableViewController: UITableViewController {
             fatalError("Unable to instantiate")
         }
 
-        programs += [Art, Business, Communication, Education, Engineering, Finance, Government, Health, History, Information, Language, Ministry, Outdoors, Social, Sustainability]
+        programs += [Art, Business, Communication, Education, Engineering, Finance, Government, Health, History, Information, Language, Ministry, Social, Sustainability]
     }
     
     override func viewDidLoad() {

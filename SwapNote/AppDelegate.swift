@@ -17,16 +17,17 @@ import FirebaseFirestore
 import GoogleSignIn
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegate, GIDSignInDelegate{
+class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegate{
     
     var window: UIWindow?
     var databaseRef: DatabaseReference!
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        // Hide Status Bar
+        UIApplication.shared.isStatusBarHidden = false
+        
         // Override point for customization after application launch.
         FirebaseApp.configure()
-        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
-        GIDSignIn.sharedInstance().delegate = self
         Database.database().isPersistenceEnabled = true
  
         // Facebook Login
@@ -56,67 +57,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegat
     }
 
 
-func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-    // ...
-    if let error = error {
-        print(error)
-        return
+    private func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> (Bool, Bool) {
+        
+        return (SDKApplicationDelegate.shared.application(app, open: url, options:options),
+                GIDSignIn.sharedInstance().handle(url,
+                                                  sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
+                                                  annotation: [:]))
+        
     }
     
-    guard let authentication = user.authentication else { return }
-    let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
-                                                   accessToken: authentication.accessToken)
-    // ...
-    
-    Auth.auth().signIn(with: credential) { (user, error) in
-        if let error = error {
-            print(error)
-            return
-        }
-        // User is signed in
-        self.databaseRef = Database.database().reference()
-        self.databaseRef.child("users").child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            let snapshot = snapshot.value as? NSDictionary
-            if(snapshot == nil){
-                self.databaseRef.child("users").child(user!.uid).child("first_name").setValue(user?.displayName)
-                self.databaseRef.child("users").child(user!.uid).child("last_name").setValue("")
-                self.databaseRef.child("users").child(user!.uid).child("bio").setValue("")
-                self.databaseRef.child("users").child(user!.uid).child("user_photo").setValue("")
-                self.databaseRef.child("users").child(user!.uid).child("user_rating").setValue("")
-                self.databaseRef.child("users").child(user!.uid).child("username").setValue("")
-                self.databaseRef.child("users").child(user!.uid).child("email").setValue(user?.email)
-            }
-            else{
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let initialVC:UITabBarController = storyboard.instantiateViewController(withIdentifier: "dashboardView") as! UITabBarController
-                self.window = UIWindow(frame: UIScreen.main.bounds)
-                self.window?.rootViewController = initialVC
-                self.window?.makeKeyAndVisible()
-            }
-        })
-
-
-    }
-}
-    
-    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        // Perform any operations when the user disconnects from app here.
-        let firebaseAuth = Auth.auth()
-        do {
-            try firebaseAuth.signOut()
-        } catch let signOutError as NSError {
-            print ("Error signing out: %@", signOutError)
-        }
-    }
-
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         return GIDSignIn.sharedInstance().handle(url,
-                                                 sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
-                                                 annotation: [:])
-        
-//        return SDKApplicationDelegate.shared.application(app, open: url, options:options)
-        
+                                                 sourceApplication: sourceApplication,
+                                                 annotation: annotation)
     }
+
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

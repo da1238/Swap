@@ -11,28 +11,37 @@ import FirebaseAuth
 import FirebaseCore
 import FirebaseDatabase
 import FirebaseStorage
+import FBSDKLoginKit
+import GoogleSignIn
 
-class AccountTableViewController: UITableViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+
+class AccountTableViewController: UITableViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     //MARK: Properties
     @IBOutlet weak var profilePicture: UIImageView!
     @IBOutlet weak var txtFirstName: UITextField!
     @IBOutlet weak var txtLastName: UITextField!
     @IBOutlet weak var txtUsername: UITextField!
-    @IBOutlet weak var txtBio: UITextView!
     @IBOutlet weak var txtEmail: UITextField!
+    @IBOutlet weak var txtMajor: UITextField!
+    @IBOutlet weak var txtYear: UITextField!
+    @IBOutlet weak var txtPhoneNumber: UITextField!
+    @IBOutlet weak var txtCollege: UITextField!
     @IBOutlet weak var photoActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var doneButton: UIBarButtonItem!
+    
     
     //MARK: Variables
     let databaseRef = Database.database().reference()
-    let storageRef = Storage.storage().reference()
     var imagePicker = UIImagePickerController()
-    let numberOfRowsAtSection: [Int] = [4, 1, 1]
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
+    let numberOfRowsAtSection: [Int] = [6, 2, 1]
+    var profileImageUrl: String!
     var selectedImage: UIImage?
+    var noPic: UIImage!
+    
 
 
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -40,26 +49,43 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
         
         // Profile Picture customization
         profilePicture.contentMode = UIViewContentMode.scaleAspectFit
-        profilePicture.layer.cornerRadius = 50
+        profilePicture.layer.cornerRadius = profilePicture.frame.size.height/2
         profilePicture.layer.masksToBounds = true
+        profilePicture.layer.borderWidth = 2
+        profilePicture.layer.borderColor = UIColor(red:0.00, green:0.80, blue:0.61, alpha:1.0).cgColor
         
         // Navigation Bar customization
         navigationController!.navigationBar.prefersLargeTitles = true
         
-
         setupProfile()
         let user = Auth.auth().currentUser
         if let user = user {
             
             let emailtext = user.email
             txtEmail.placeholder = emailtext
-        
     }
         
         // Dismiss keyboard
         self.tableView.keyboardDismissMode = .onDrag
         
 }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        setupProfile()
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        // Disable the Save button while editing.
+        doneButton.isEnabled = false
+    }
+    
+    //MARK: Private functions
+    private func updateDoneButtonState() {
+        // Disable the Save button if the text field is empty.
+        let text = txtFirstName.text ?? ""
+        doneButton.isEnabled = !text.isEmpty
+    }
+    
     func setupProfile(){
         
         if let uid = Auth.auth().currentUser?.uid{
@@ -67,7 +93,7 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
             let storageRef = Storage.storage().reference().child("profile_picture").child(uid)
             storageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
                 if (data == nil) {
-                    self.profilePicture.image = #imageLiteral(resourceName: "UserIcon")
+                    self.profilePicture.image = self.noPic
                 }
                 else {
                 let pic = UIImage(data: data!)
@@ -78,10 +104,13 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
             databaseRef.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dict = snapshot.value as? [String: AnyObject]
                 {
-                    self.txtFirstName.placeholder = dict["first_name"] as? String
-                    self.txtLastName.placeholder = dict["last_name"] as? String
-                    self.txtUsername.placeholder = dict["username"] as? String
-                    self.txtBio.text = dict["bio"] as? String
+                    self.txtFirstName.text = dict["first_name"] as? String
+                    self.txtLastName.text = dict["last_name"] as? String
+                    self.txtUsername.text = dict["username"] as? String
+                    self.txtMajor.text = dict["major"] as? String
+                    self.txtCollege.text = dict["college"] as? String
+                    self.txtYear.text = dict["year"] as? String
+                    self.txtPhoneNumber.text = dict["phone"] as? String
                 }
             })
             
@@ -95,7 +124,8 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
             if Auth.auth().currentUser != nil{
                 do{
                     try? Auth.auth().signOut()
-                    
+                    GIDSignIn.sharedInstance().signOut()
+                    FBSDKLoginManager().logOut()
                     if Auth.auth().currentUser == nil {
                         let loginVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login") as! LoginViewController
                         self.present(loginVC, animated: true, completion: nil)
@@ -108,10 +138,8 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
     
     @IBAction func btnEditPicture(_ sender: Any) {
         
-        // Create Action sheet
-        
-        let actionSheet = UIAlertController(title:"Profile Picture", message:"Select", preferredStyle: UIAlertControllerStyle.actionSheet)
-       
+        //Create action sheet
+        let actionSheet = UIAlertController(title:"Upload Picture", message:"Select Picture", preferredStyle: UIAlertControllerStyle.actionSheet)
         let photoGallery = UIAlertAction(title: "Open Camera Roll", style: UIAlertActionStyle.default) { (action) in
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.savedPhotosAlbum) {
                 self.imagePicker.delegate = self
@@ -131,16 +159,13 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
                 
             }
         }
-
+        
         actionSheet.addAction(photoGallery)
         actionSheet.addAction(camera)
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
         self.present(actionSheet, animated: true, completion: nil)
-    }
-    
-    @objc func dismissFullScreenImage(sender: UITapGestureRecognizer){
-        sender.view?.removeFromSuperview()
+
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -153,8 +178,9 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
             selectedImageFromPicker = originalImage
         }
         
-        if let selectedImage = selectedImageFromPicker{
-            profilePicture.image = selectedImage
+        if let image = selectedImageFromPicker{
+            selectedImage = image
+            profilePicture.image = image
         }
         
         dismiss(animated: true, completion: nil)
@@ -164,45 +190,60 @@ class AccountTableViewController: UITableViewController, UITextFieldDelegate, UI
         dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func btnDone(_ sender: Any) {
+        
+        // Activity Indicator
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        
+        guard let firstName = self.txtFirstName.text else {return}
+        guard let lastName = self.txtLastName.text else {return}
+        guard let username = self.txtUsername.text else {return}
+        guard let major = self.txtMajor.text else {return}
+        guard let college = self.txtCollege.text else {return}
+        guard let year = self.txtYear.text else {return}
+        guard let phone = self.txtPhoneNumber.text else {return}
+        let user = Auth.auth().currentUser
+        let uid = user?.uid
+        let storageRef = Storage.storage().reference().child("profile_picture").child(uid!)
+        if let profileImg = self.selectedImage, let imageData = UIImageJPEGRepresentation(profileImg, 0.1){
+            storageRef.putData(imageData, metadata: nil, completion: { (metadata, error) in
+                if error != nil{
+                    return
+                }
+                self.profileImageUrl = metadata?.downloadURL()?.absoluteString
+                })
+            }
+        let userReference = self.databaseRef.child("users").child(uid!)
+        let values = ["first_name": firstName,
+                      "last_name": lastName,
+                      "email": user?.email,
+                      "username": username,
+                      "major": major,
+                      "college": college,
+                      "year": year,
+                      "phone": phone,
+                      "user_photo": self.profileImageUrl,
+                      "user_rating": "0.0"]
+        
+        userReference.updateChildValues(values, withCompletionBlock: {(error, ref) in
+            if error != nil {
+                print(error!)
+                return
+            }
+            self.activityIndicator.stopAnimating()
+
+        })
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    @IBAction func btnDone(_ sender: Any) {
-        
-        guard let bio = self.txtBio.text else{
-            print("email error")
-            return
-        }
-        
-        guard let email = self.txtEmail.text else{
-            print("username error")
-            return
-        }
-        guard let lastName = self.txtLastName.text else{
-            print("username error")
-            return
-        }
-        guard let firstName = self.txtFirstName.text else{
-            print("username error")
-            return
-        }
-        guard let username = self.txtUsername.text else{
-            print("username error")
-            return
-        }
-
-        let uid = Auth.auth().currentUser?.uid
-        let storageRef = Storage.storage().reference().child("profile_picture").child(uid!)
-        let userReference = self.databaseRef.child("users").child(uid!)
-        
-
-
-        
-    }
-    
 
     // MARK: - Table view data source
 

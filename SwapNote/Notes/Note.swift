@@ -7,34 +7,68 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class Note {
 
-    //MARK: Properties
-    var name: String
+    var downloaded: Bool
+    var fileDownloaded: Bool
+    var documentRef: DocumentReference
+    var remoteURL: String?
+    var localURL: String?
+    var name: String?
+    var image: UIImage?
     var rating: Int
-    var createdBy: String
-    var courseTitle: String
-    var courseNumber: Int
-    let dateCreated = Date()
     
-    
-    //MARK: Inititialization
-    init?(name: String, createdBy: String, courseTitle: String, courseNumber: Int) {
+    init(documentRef: DocumentReference, downloadContent: Bool) {
+        self.downloaded = false
+        self.fileDownloaded = false
+        self.documentRef = documentRef
+        self.rating = 4
         
-        if name.isEmpty || createdBy.isEmpty || courseTitle.isEmpty || courseNumber < 0{
-            return nil
+        if downloadContent {
+            downloadNote()
         }
-        
-        // Initiliaze stored properties
-        self.name = name
-        self.rating = 0
-        self.createdBy = createdBy
-        self.courseTitle = courseTitle
-        self.courseNumber = courseNumber
     }
     
+    func downloadNote() {
+        self.documentRef.getDocument(completion: {(document, error) in
+            if let document = document {
+                let data = document.data()
+                let name: String = data!["name"] as! String
+//                let remoteURL: String = data!["url"] as! String
+                self.downloaded = true
+//                self.remoteURL = remoteURL
+                self.name = name
+//                self.downloadFile()
+            } else {}
+        })
+    }
 }
+    
+//    func downloadFile() {
+//        let transferManager = AWSS3TransferManager.default()
+//
+//        let downloadRequest: AWSS3TransferManagerDownloadRequest = AWSS3TransferManagerDownloadRequest()!
+//        downloadRequest.bucket = "swapnotes"
+//        downloadRequest.key = remoteURL
+//
+//        let downloadingFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(remoteURL!)
+//        downloadRequest.downloadingFileURL = downloadingFileURL
+//
+//        transferManager.download(downloadRequest).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
+//
+//            if task.error != nil {
+//                print(task.error)
+//            } else {
+//                //                let downloadOutput = task.result
+//                self.image = UIImage(contentsOfFile: downloadingFileURL.path)
+//            }
+//
+//            return nil
+//        })
+//    }
+
 
 extension Date
 {
