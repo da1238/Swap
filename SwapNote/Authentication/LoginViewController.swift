@@ -35,10 +35,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Google Sign-in
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance().delegate = self
         GIDSignIn.sharedInstance().uiDelegate = self
-
+        
         // Hide keyboard on Done
         self.password.delegate = self;
         self.email.delegate = self;
@@ -311,16 +312,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
         }
         return false
     }
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
 }
 

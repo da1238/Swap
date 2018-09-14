@@ -41,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegat
             self.window?.rootViewController = initialVC
             self.window?.makeKeyAndVisible()
         }
+        
     
         // NavBar customization
         
@@ -97,7 +98,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegat
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if viewController is NewNoteViewController {
-            if let newVC = tabBarController.storyboard?.instantiateViewController(withIdentifier: "newNote") {
+            if let newVC = tabBarController.storyboard?.instantiateViewController(withIdentifier: "uploadNote") {
                 tabBarController.present(newVC, animated: true)
                 return false
             }
@@ -106,5 +107,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegat
         return true
     }
     
+        
 }
 

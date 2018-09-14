@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "icons8-inbox-50.png",
+      "filename" : "icons8-sent-51.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "icons8-inbox-51.png",
+      "filename" : "icons8-sent-50.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "icons8-inbox-52.png",
+      "filename" : "icons8-sent-52.png",
       "scale" : "3x"
     }
   ],

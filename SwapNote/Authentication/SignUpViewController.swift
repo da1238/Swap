@@ -13,6 +13,7 @@ import Firebase
 import FirebaseDatabase
 import FirebaseFirestore
 import FirebaseStorage
+import Alamofire
 
 class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
@@ -22,7 +23,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     var imagePicker = UIImagePickerController()
     var selectedImage: UIImage?
     var profileImageUrl: String?
-    var courses = [Course]()
     
     // Database Reference
     var database = Firestore.firestore()
@@ -76,7 +76,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     @IBAction func uploadPicture(_ sender: UITapGestureRecognizer) {
         
         //Create action sheet
-        let actionSheet = UIAlertController(title:"Upload Picture", message:"Select Picture", preferredStyle: UIAlertControllerStyle.actionSheet)
+        let actionSheet = UIAlertController(title:"", message:"", preferredStyle: UIAlertControllerStyle.actionSheet)
         let photoGallery = UIAlertAction(title: "Open Camera Roll", style: UIAlertActionStyle.default) { (action) in
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.savedPhotosAlbum) {
                 self.imagePicker.delegate = self
@@ -97,6 +97,8 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
             }
         }
         
+        actionSheet.message = nil
+        actionSheet.title = nil
         actionSheet.addAction(photoGallery)
         actionSheet.addAction(camera)
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -104,6 +106,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         self.present(actionSheet, animated: true, completion: nil)
     }
     
+    // Image picker
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
         var selectedImageFromPicker: UIImage?
@@ -146,7 +149,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     
     
     //MARK: Sign Up
-    
     @IBAction func signUp(_ sender: Any) {
         // Activity Indicator
         activityIndicator.center = view.center
@@ -172,6 +174,8 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
                     print("email error")
                     return
                 }
+                
+                // Create user with default parameters
                 
                 let user = Auth.auth().currentUser
                 let uid = user?.uid
@@ -229,7 +233,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
     }
     
     
-    
+    // Send confirmation email
     func sendEmail(){
         Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
             if error != nil {
@@ -301,18 +305,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate, UIImagePicker
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
 }
 

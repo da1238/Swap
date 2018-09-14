@@ -15,6 +15,8 @@ target 'SwapNote' do
   pod 'JSQMessagesViewController'
   pod 'GoogleSignIn'
   pod 'DZNEmptyDataSet'
+  pod 'Alamofire', '~> 4.7'
+  pod 'StatusAlert', '~> 0.10.1'
   
 
 end

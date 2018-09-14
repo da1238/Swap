@@ -12,7 +12,25 @@
 		<key>SwapNote.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>21</integer>
+			<integer>22</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>63665E3D1FDF6A5400296A58</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>63665E511FDF6A5400296A58</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>63665E5C1FDF6A5400296A58</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
