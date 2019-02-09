@@ -18,7 +18,7 @@ import FBSDKCoreKit
 import GoogleSignIn
 
 
-class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate, LoginButtonDelegate, GIDSignInDelegate, GIDSignInUIDelegate{
+class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate,  GIDSignInDelegate, GIDSignInUIDelegate{
     
     //MARK: Variables
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
@@ -54,11 +54,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
         logInBtn.layer.borderColor = UIColor(red:0.00, green:0.80, blue:0.61, alpha:1.0).cgColor
         
         // Facebook Login Button
-        let loginButton = LoginButton(readPermissions: [ .publicProfile ])
-        loginButton.frame = CGRect(x: 95, y: 535, width: 192, height: 35)
-        view.addSubview(loginButton)
-        loginButton.delegate = self as LoginButtonDelegate
-        
+//        let loginButton = LoginButton(readPermissions: [ .publicProfile ])
+//        loginButton.frame = CGRect(x: 95, y: 535, width: 192, height: 35)
+//        view.addSubview(loginButton)
+//        loginButton.delegate = self as LoginButtonDelegate
+//        
         // Google Button Customize
         signInButton.style = GIDSignInButtonStyle.wide
         
@@ -135,86 +135,86 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIViewControll
         }
     }
     
-    //Facebook Auth
-    func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
-        
-        // Activity Indicator
-        activityIndicator.center = view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
-        
-        view.addSubview(activityIndicator)
-        
-        switch result {
-        case .success:
-            self.activityIndicator.startAnimating()
-            let accessToken = AccessToken.current
-            guard let accessTokenString = accessToken?.authenticationToken else { return }
-            
-            let credentials = FacebookAuthProvider.credential(withAccessToken: accessTokenString)
-            Auth.auth().signIn(with: credentials, completion: { (user, error) in
-                if error != nil{
-                    print(error!)
-                    return
-                }
-                
-                // User is signed in
-                self.databaseRef = Database.database().reference()
-                self.databaseRef.child("users").child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                    let snapshot = snapshot.value as? NSDictionary
-                    if(snapshot == nil){
-                        if((FBSDKAccessToken.current()) != nil) {
-                            
-                            FBSDKGraphRequest(graphPath: "me",
-                                              parameters: ["fields": "id, name, first_name, last_name, picture.type(large), email , gender"]).start(completionHandler: { (connection, result, error) -> Void in
-                                                if (error == nil) {
-                                                    self.dict = result as! [String : AnyObject]
-                                                    let firstName = self.dict["first_name"] as? String
-                                                    let lastName = self.dict["last_name"] as? String
-                                                    let profilePicture = self.dict["picture.type(large)"] as? String
-                                                    let email = self.dict["email"] as? String
-                                                    
-                                                    self.databaseRef.child("users").child(user!.uid).child("first_name").setValue(firstName)
-                                                    self.databaseRef.child("users").child(user!.uid).child("last_name").setValue(lastName)
-                                                    self.databaseRef.child("users").child(user!.uid).child("email").setValue(email)
-                                                    self.databaseRef.child("users").child(user!.uid).child("username").setValue(firstName)
-                                                    self.databaseRef.child("users").child(user!.uid).child("major").setValue("Unspecified Major")
-                                                    self.databaseRef.child("users").child(user!.uid).child("college").setValue("Messiah College")
-                                                    self.databaseRef.child("users").child(user!.uid).child("user_photo").setValue(profilePicture)
-                                                    self.databaseRef.child("users").child(user!.uid).child("user_rating").setValue("0.0")
-                                                    self.databaseRef.child("users").child(user!.uid).child("phone").setValue("(000)-000-000")
-                                                    
-                                                }})
-                        }
-                        
-                    }
-                })
-                self.getFBUserData()
-                self.activityIndicator.stopAnimating()
-                self.performSegue(withIdentifier: "signIn", sender: self)
-            })
-        default:
-            break
-        }
-    }
-    
-    func getFBUserData(){
-        if((FBSDKAccessToken.current()) != nil) {
-            
-            FBSDKGraphRequest(graphPath: "me",
-                              parameters: ["fields": "id, name, first_name, last_name, picture.type(large), email , gender"]).start(completionHandler: { (connection, result, error) -> Void in
-                                if (error == nil) {
-                                    self.dict = result as! [String : AnyObject]
-                                    print(result!)
-                                    print(self.dict)
-                                    
-                                }})
-        }
-    }
-    
-    func loginButtonDidLogOut(_ loginButton: LoginButton) {
-        print("Logged out of Facebook")
-    }
+//    //Facebook Auth
+//    func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
+//
+//        // Activity Indicator
+//        activityIndicator.center = view.center
+//        activityIndicator.hidesWhenStopped = true
+//        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+//
+//        view.addSubview(activityIndicator)
+//
+//        switch result {
+//        case .success:
+//            self.activityIndicator.startAnimating()
+//            let accessToken = AccessToken.current
+//            guard let accessTokenString = accessToken?.authenticationToken else { return }
+//
+//            let credentials = FacebookAuthProvider.credential(withAccessToken: accessTokenString)
+//            Auth.auth().signIn(with: credentials, completion: { (user, error) in
+//                if error != nil{
+//                    print(error!)
+//                    return
+//                }
+//
+//                // User is signed in
+//                self.databaseRef = Database.database().reference()
+//                self.databaseRef.child("users").child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+//                    let snapshot = snapshot.value as? NSDictionary
+//                    if(snapshot == nil){
+//                        if((FBSDKAccessToken.current()) != nil) {
+//
+//                            FBSDKGraphRequest(graphPath: "me",
+//                                              parameters: ["fields": "id, name, first_name, last_name, picture.type(large), email , gender"]).start(completionHandler: { (connection, result, error) -> Void in
+//                                                if (error == nil) {
+//                                                    self.dict = result as! [String : AnyObject]
+//                                                    let firstName = self.dict["first_name"] as? String
+//                                                    let lastName = self.dict["last_name"] as? String
+//                                                    let profilePicture = self.dict["picture.type(large)"] as? String
+//                                                    let email = self.dict["email"] as? String
+//
+//                                                    self.databaseRef.child("users").child(user!.uid).child("first_name").setValue(firstName)
+//                                                    self.databaseRef.child("users").child(user!.uid).child("last_name").setValue(lastName)
+//                                                    self.databaseRef.child("users").child(user!.uid).child("email").setValue(email)
+//                                                    self.databaseRef.child("users").child(user!.uid).child("username").setValue(firstName)
+//                                                    self.databaseRef.child("users").child(user!.uid).child("major").setValue("Unspecified Major")
+//                                                    self.databaseRef.child("users").child(user!.uid).child("college").setValue("Messiah College")
+//                                                    self.databaseRef.child("users").child(user!.uid).child("user_photo").setValue(profilePicture)
+//                                                    self.databaseRef.child("users").child(user!.uid).child("user_rating").setValue("0.0")
+//                                                    self.databaseRef.child("users").child(user!.uid).child("phone").setValue("(000)-000-000")
+//
+//                                                }})
+//                        }
+//
+//                    }
+//                })
+//                self.getFBUserData()
+//                self.activityIndicator.stopAnimating()
+//                self.performSegue(withIdentifier: "signIn", sender: self)
+//            })
+//        default:
+//            break
+//        }
+//    }
+//
+//    func getFBUserData(){
+//        if((FBSDKAccessToken.current()) != nil) {
+//
+//            FBSDKGraphRequest(graphPath: "me",
+//                              parameters: ["fields": "id, name, first_name, last_name, picture.type(large), email , gender"]).start(completionHandler: { (connection, result, error) -> Void in
+//                                if (error == nil) {
+//                                    self.dict = result as! [String : AnyObject]
+//                                    print(result!)
+//                                    print(self.dict)
+//
+//                                }})
+//        }
+//    }
+//
+//    func loginButtonDidLogOut(_ loginButton: LoginButton) {
+//        print("Logged out of Facebook")
+//    }
     
     // Firebase Login
     @IBAction func logIn(_ sender: Any) {

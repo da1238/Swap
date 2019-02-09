@@ -16,131 +16,131 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import UIKit
-
-@testable import FacebookCore
-import FBSDKLoginKit
-
-/**
- A button that initiates a log in or log out flow upon tapping.
-
- `LoginButton` works with `AccessToken.current` to determine what to display,
- and automatically starts authentication when tapped (i.e., you do not need to manually subscribe action targets).
-
- Like `LoginManager`, you should make sure your app delegate is connected to `ApplicationDelegate`
- in order for the button's delegate to receive messages.
-
- `LoginButton` has a fixed height of @c 30 pixels, but you may change the width.
- Initializing the button with `nil` frame will size the button to its minimum frame.
- */
-public class LoginButton: UIView {
-
-  fileprivate var sdkLoginButton: FBSDKLoginButton
-
-  /// Delegate of the login button that can handle the result, logout events.
-  public var delegate: LoginButtonDelegate?
-  fileprivate var delegateBridge: LoginButtonDelegateBridge
-
-  /// The login behavior that is going to be used. Default: `.Native`.
-  public var loginBehavior = LoginBehavior.native {
-    didSet {
-      sdkLoginButton.loginBehavior = loginBehavior.sdkBehavior
-    }
-  }
-
-  /// The default audience. Default: `.Friends`.
-  public var defaultAudience = LoginDefaultAudience.friends {
-    didSet {
-      sdkLoginButton.defaultAudience = defaultAudience.sdkAudience
-    }
-  }
-
-  /// The desired tooltip behavior. Default: `.Automatic`.
-  public var tooltipBehavior = TooltipBehavior.automatic {
-    didSet {
-      sdkLoginButton.tooltipBehavior = tooltipBehavior.sdkBehavior
-    }
-  }
-
-  /// The desired tooltip color style. Default: `.FriendlyBlue`.
-  public var tooltipColorStyle = TooltipColorStyle.friendlyBlue {
-    didSet {
-      sdkLoginButton.tooltipColorStyle = tooltipColorStyle.sdkColorStyle
-    }
-  }
-
-  /**
-   Create a new `LoginButton` with a given optional frame and read permissions.
-
-   - parameter frame:              Optional frame to initialize with. Default: `nil`, which uses a default size for the button.
-   - parameter readPermissions: Array of read permissions to request when logging in.
-   */
-  public init(frame: CGRect? = nil, readPermissions: [ReadPermission]) {
-    let sdkLoginButton = FBSDKLoginButton()
-    sdkLoginButton.readPermissions = readPermissions.map({ $0.permissionValue.name })
-
-    self.sdkLoginButton = sdkLoginButton
-    delegateBridge = LoginButtonDelegateBridge()
-
-    let frame = frame ?? CGRect(origin: .zero, size: sdkLoginButton.bounds.size)
-    super.init(frame: frame)
-
-    delegateBridge.setupAsDelegateFor(sdkLoginButton, loginButton: self)
-    addSubview(sdkLoginButton)
-  }
-
-  /**
-   Create a new `LoginButton` with a given optional frame and publish permissions.
-
-   - parameter frame:              Optional frame to initialize with. Default: `nil`, which uses a default size for the button.
-   - parameter publishPermissions: Array of publish permissions to request when logging in.
-   */
-  public init(frame: CGRect? = nil, publishPermissions: [PublishPermission]) {
-    let sdkLoginButton = FBSDKLoginButton()
-    sdkLoginButton.publishPermissions = publishPermissions.map({ $0.permissionValue.name })
-
-    self.sdkLoginButton = sdkLoginButton
-    delegateBridge = LoginButtonDelegateBridge()
-
-    let frame = frame ?? sdkLoginButton.bounds
-    super.init(frame: frame)
-
-    delegateBridge.setupAsDelegateFor(sdkLoginButton, loginButton: self)
-    addSubview(sdkLoginButton)
-  }
-
-  /**
-   Create a new `LoginButton` from an encoded interface file.
-
-   - parameter decoder: The coder to initialize from.
-   */
-  public required init?(coder decoder: NSCoder) {
-    sdkLoginButton = FBSDKLoginButton(coder: decoder) ?? FBSDKLoginButton()
-    delegateBridge = LoginButtonDelegateBridge()
-
-    super.init(coder: decoder)
-
-    delegateBridge.setupAsDelegateFor(sdkLoginButton, loginButton: self)
-    addSubview(sdkLoginButton)
-  }
-}
-
-extension LoginButton {
-  public override func layoutSubviews() {
-    super.layoutSubviews()
-
-    sdkLoginButton.frame = CGRect(origin: .zero, size: bounds.size)
-  }
-
-  public override func sizeToFit() {
-    bounds.size = sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-  }
-
-  public override func sizeThatFits(_ size: CGSize) -> CGSize {
-    return sdkLoginButton.sizeThatFits(size)
-  }
-
-  public override var intrinsicContentSize: CGSize {
-    return sdkLoginButton.intrinsicContentSize
-  }
-}
+//import UIKit
+//
+//@testable import FacebookCore
+//import FBSDKLoginKit
+//
+///**
+// A button that initiates a log in or log out flow upon tapping.
+//
+// `LoginButton` works with `AccessToken.current` to determine what to display,
+// and automatically starts authentication when tapped (i.e., you do not need to manually subscribe action targets).
+//
+// Like `LoginManager`, you should make sure your app delegate is connected to `ApplicationDelegate`
+// in order for the button's delegate to receive messages.
+//
+// `LoginButton` has a fixed height of @c 30 pixels, but you may change the width.
+// Initializing the button with `nil` frame will size the button to its minimum frame.
+// */
+//public class LoginButton: UIView {
+//
+//  fileprivate var sdkLoginButton: FBSDKLoginButton
+//
+//  /// Delegate of the login button that can handle the result, logout events.
+//  public var delegate: LoginButtonDelegate?
+//  fileprivate var delegateBridge: LoginButtonDelegateBridge
+//
+//  /// The login behavior that is going to be used. Default: `.Native`.
+//  public var loginBehavior = LoginBehavior.native {
+//    didSet {
+//      sdkLoginButton.loginBehavior = loginBehavior.sdkBehavior
+//    }
+//  }
+//
+//  /// The default audience. Default: `.Friends`.
+//  public var defaultAudience = LoginDefaultAudience.friends {
+//    didSet {
+//      sdkLoginButton.defaultAudience = defaultAudience.sdkAudience
+//    }
+//  }
+//
+//  /// The desired tooltip behavior. Default: `.Automatic`.
+//  public var tooltipBehavior = TooltipBehavior.automatic {
+//    didSet {
+//      sdkLoginButton.tooltipBehavior = tooltipBehavior.sdkBehavior
+//    }
+//  }
+//
+//  /// The desired tooltip color style. Default: `.FriendlyBlue`.
+//  public var tooltipColorStyle = TooltipColorStyle.friendlyBlue {
+//    didSet {
+//      sdkLoginButton.tooltipColorStyle = tooltipColorStyle.sdkColorStyle
+//    }
+//  }
+//
+//  /**
+//   Create a new `LoginButton` with a given optional frame and read permissions.
+//
+//   - parameter frame:              Optional frame to initialize with. Default: `nil`, which uses a default size for the button.
+//   - parameter readPermissions: Array of read permissions to request when logging in.
+//   */
+//  public init(frame: CGRect? = nil, readPermissions: [ReadPermission]) {
+//    let sdkLoginButton = FBSDKLoginButton()
+//    sdkLoginButton.readPermissions = readPermissions.map({ $0.permissionValue.name })
+//
+//    self.sdkLoginButton = sdkLoginButton
+//    delegateBridge = LoginButtonDelegateBridge()
+//
+//    let frame = frame ?? CGRect(origin: .zero, size: sdkLoginButton.bounds.size)
+//    super.init(frame: frame)
+//
+//    delegateBridge.setupAsDelegateFor(sdkLoginButton, loginButton: self)
+//    addSubview(sdkLoginButton)
+//  }
+//
+//  /**
+//   Create a new `LoginButton` with a given optional frame and publish permissions.
+//
+//   - parameter frame:              Optional frame to initialize with. Default: `nil`, which uses a default size for the button.
+//   - parameter publishPermissions: Array of publish permissions to request when logging in.
+//   */
+//  public init(frame: CGRect? = nil, publishPermissions: [PublishPermission]) {
+//    let sdkLoginButton = FBSDKLoginButton()
+//    sdkLoginButton.publishPermissions = publishPermissions.map({ $0.permissionValue.name })
+//
+//    self.sdkLoginButton = sdkLoginButton
+//    delegateBridge = LoginButtonDelegateBridge()
+//
+//    let frame = frame ?? sdkLoginButton.bounds
+//    super.init(frame: frame)
+//
+//    delegateBridge.setupAsDelegateFor(sdkLoginButton, loginButton: self)
+//    addSubview(sdkLoginButton)
+//  }
+//
+//  /**
+//   Create a new `LoginButton` from an encoded interface file.
+//
+//   - parameter decoder: The coder to initialize from.
+//   */
+//  public required init?(coder decoder: NSCoder) {
+//    sdkLoginButton = FBSDKLoginButton(coder: decoder) ?? FBSDKLoginButton()
+//    delegateBridge = LoginButtonDelegateBridge()
+//
+//    super.init(coder: decoder)
+//
+//    delegateBridge.setupAsDelegateFor(sdkLoginButton, loginButton: self)
+//    addSubview(sdkLoginButton)
+//  }
+//}
+//
+//extension LoginButton {
+//  public override func layoutSubviews() {
+//    super.layoutSubviews()
+//
+//    sdkLoginButton.frame = CGRect(origin: .zero, size: bounds.size)
+//  }
+//
+//  public override func sizeToFit() {
+//    bounds.size = sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+//  }
+//
+//  public override func sizeThatFits(_ size: CGSize) -> CGSize {
+//    return sdkLoginButton.sizeThatFits(size)
+//  }
+//
+//  public override var intrinsicContentSize: CGSize {
+//    return sdkLoginButton.intrinsicContentSize
+//  }
+//}
